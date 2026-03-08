@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#3b82f6">
+    <title>Plant Monitoring System</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192x192.png">
+    <script src="config.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --text: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            margin: -16px -16px 20px -16px;
+            padding: 24px 16px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+        }
+        
+        .header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .header p {
+            opacity: 0.9;
+            font-size: 0.875rem;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-title {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .menu-btn {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .menu-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-btn.active {
+            background: linear-gradient(145deg, var(--primary), var(--primary-dark));
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+        }
+        
+        .menu-icon {
+            font-size: 2rem;
+        }
+        
+        .menu-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            background: #0f172a;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            padding: 14px;
+            color: var(--text);
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .input-group input {
+            flex: 1;
+        }
+        
+        .unit {
+            background: var(--border);
+            padding: 14px;
+            border-radius: 10px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            min-width: 60px;
+            text-align: center;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #dc2626);
+            color: white;
+        }
+        
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #d97706);
+            color: white;
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #059669);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: var(--border);
+            color: var(--text);
+        }
+        
+        .btn:active {
+            transform: scale(0.98);
+        }
+        
+        .param-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+        
+        .param-name {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .param-prev {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .status-open {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+        
+        .status-progress {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+            border: 1px solid var(--warning);
+        }
+        
+        .status-closed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+            border: 1px solid var(--success);
+        }
+        
+        .ticket {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .ticket-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .ticket-id {
+            font-family: monospace;
+            font-size: 0.875rem;
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .ticket-body {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+        }
+        
+        .ticket-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .ticket-actions button {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .nav-bottom {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--bg-card);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+        }
+        
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+        
+        .nav-text {
+            font-size: 0.625rem;
+            font-weight: 600;
+        }
+        
+        .progress-container {
+            background: var(--border);
+            border-radius: 10px;
+            height: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+            transition: width 0.3s;
+        }
+        
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            background: var(--bg-card);
+            color: white;
+            padding: 16px 24px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 9999;
+            transition: transform 0.3s;
+            border: 1px solid var(--border);
+        }
+        
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        .toast.warning { border-left: 4px solid var(--warning); }
+        
+        .offline-banner {
+            background: var(--warning);
+            color: #000;
+            text-align: center;
+            padding: 8px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: none;
+        }
+        
+        .offline-banner.show {
+            display: block;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .area-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .area-item {
+            background: var(--bg-card);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .area-item:active {
+            transform: scale(0.98);
+        }
+        
+        .area-item.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .quick-actions {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .quick-btn {
+            white-space: nowrap;
+            padding: 10px 16px;
+            background: var(--border);
+            border: none;
+            border-radius: 20px;
+            color: var(--text);
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .quick-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .section {
+            display: none;
+        }
+        
+        .section.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .photo-upload {
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .photo-upload:active {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: var(--primary);
+        }
+        
+        .photo-preview {
+            width: 100%;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-number {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+        
+        .stat-open { color: var(--danger); }
+        .stat-progress { color: var(--warning); }
+        .stat-closed { color: var(--success); }
+
+        .sync-status {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 100;
+        }
+
+        .sync-status.online {
+            color: var(--success);
+            border-color: var(--success);
+        }
+
+        .sync-status.offline {
+            color: var(--warning);
+            border-color: var(--warning);
+        }
+
+        .sync-status.syncing {
+            color: var(--primary);
+            border-color: var(--primary);
+        }
+        
+        .setup-alert {
+            background: rgba(239, 68, 68, 0.2);
+            border: 2px solid var(--danger);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        
+        .setup-alert h3 {
+            color: var(--danger);
+            margin-bottom: 8px;
+        }
+        
+        .setup-alert code {
+            background: var(--bg-dark);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-banner" id="offlineBanner">
+        ⚠️ Mode Offline - Data akan disinkronkan saat online
+    </div>
+
+    <!-- Setup Alert (muncul jika GAS_URL belum di-setting) -->
+    <div class="setup-alert" id="setupAlert" style="display: none;">
+        <h3>⚠️ Setup Required</h3>
+        <p>Edit file <code>config.js</code> dan ganti <code>GAS_URL</code> dengan URL Web App Anda.</p>
+        <p><a href="https://github.com/YOUR_USERNAME/REPO_NAME/edit/main/config.js" style="color: var(--primary);">Edit di GitHub</a></p>
+    </div>
+
+    <!-- Sync Status Indicator -->
+    <div class="sync-status offline" id="syncStatus">
+        <span id="syncIcon">📴</span>
+        <span id="syncText">Offline</span>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span id="toastIcon">✓</span>
+        <span id="toastMessage">Operasi berhasil</span>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div class="section active" id="menuSection">
+        <div class="header">
+            <h1>🏭 Plant Monitoring</h1>
+            <p>Sistem Logsheet & Anomali</p>
+        </div>
+        
+        <div class="container">
+            <div class="card">
+                <div class="card-title">📊 Menu Utama</div>
+                <div class="menu-grid">
+                    <div class="menu-btn" onclick="showSection('turbineSection')">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">Logsheet Turbine</span>
+                    </div>
+                    <div class="menu-btn" onclick="showSection('ctSection')">
+                        <span class="menu-icon">🌀</span>
+                        <span class="menu-text">Logsheet CT</span>
+                    </div>
+                    <div class="menu-btn" onclick="showSection('oliSection')">
+                        <span class="menu-icon">🛢️</span>
+                        <span class="menu-text">Logsheet Oli</span>
+                    </div>
+                    <div class="menu-btn" onclick="showSection('laporanSection')">
+                        <span class="menu-icon">📝</span>
+                        <span class="menu-text">Input Laporan</span>
+                    </div>
+                    <div class="menu-btn" onclick="showSection('tpmSection')">
+                        <span class="menu-icon">⚠️</span>
+                        <span class="menu-text">Unsafe/Anomali</span>
+                    </div>
+                    <div class="menu-btn" onclick="showSection('dashboardSection')">
+                        <span class="menu-icon">📈</span>
+                        <span class="menu-text">Dashboard</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-title">📋 Rekap Data</div>
+                <div class="menu-grid">
+                    <div class="menu-btn btn-secondary" onclick="showRekap('CT')">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">Rekap CT</span>
+                    </div>
+                    <div class="menu-btn btn-secondary" onclick="showRekap('TURBINE')">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">Rekap Turbine</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Sync Info -->
+            <div class="card" id="pendingSyncCard" style="display: none;">
+                <div class="card-title">🔄 Menunggu Sinkronisasi</div>
+                <div id="pendingSyncList"></div>
+                <button class="btn btn-primary" onclick="forceSync()">🔄 Sync Sekarang</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TURBINE SECTION -->
+    <div class="section" id="turbineSection">
+        <div class="header">
+            <h1>⚙️ Logsheet Turbine</h1>
+            <p>Pilih Area Monitoring</p>
+        </div>
+        <div class="container">
+            <div class="progress-container">
+                <div class="progress-bar" id="turbineProgress" style="width: 0%"></div>
+            </div>
+            <div class="area-list" id="turbineAreas"></div>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- CT SECTION -->
+    <div class="section" id="ctSection">
+        <div class="header">
+            <h1>🌀 Logsheet CT</h1>
+            <p>Pilih Area Cooling Tower</p>
+        </div>
+        <div class="container">
+            <div class="progress-container">
+                <div class="progress-bar" id="ctProgress" style="width: 0%"></div>
+            </div>
+            <div class="area-list" id="ctAreas"></div>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- OLI SECTION -->
+    <div class="section" id="oliSection">
+        <div class="header">
+            <h1>🛢️ Logsheet Oli</h1>
+            <p>Pilih Area Gearbox</p>
+        </div>
+        <div class="container">
+            <div class="area-list" id="oliAreas"></div>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- INPUT PARAMETER SECTION -->
+    <div class="section" id="inputSection">
+        <div class="header">
+            <h1 id="inputTitle">📊 Input Parameter</h1>
+            <p id="inputSubtitle">Area: -</p>
+        </div>
+        <div class="container">
+            <div class="card">
+                <div class="card-title" id="paramCounter">Parameter 1/10</div>
+                <div class="param-card">
+                    <div class="param-name" id="paramName">Loading...</div>
+                    <div class="input-group">
+                        <input type="text" id="paramInput" placeholder="Masukkan nilai" inputmode="decimal">
+                        <span class="unit" id="paramUnit">-</span>
+                    </div>
+                    <div class="param-prev" id="paramPrev">Data sebelumnya: -</div>
+                </div>
+                
+                <div class="quick-actions" id="quickActions">
+                    <button class="quick-btn" onclick="setQuickValue('ON')">ON</button>
+                    <button class="quick-btn" onclick="setQuickValue('OFF')">OFF</button>
+                    <button class="quick-btn" onclick="setQuickValue('NORMAL')">NORMAL</button>
+                    <button class="quick-btn" onclick="setQuickValue('ERROR')">ERROR</button>
+                </div>
+
+                <button class="btn btn-primary" onclick="nextParameter()">
+                    Simpan & Lanjut →
+                </button>
+                <button class="btn btn-secondary" onclick="prevParameter()">← Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LAPORAN SECTION -->
+    <div class="section" id="laporanSection">
+        <div class="header">
+            <h1>📝 Input Laporan</h1>
+            <p>Laporan Shift Harian</p>
+        </div>
+        <div class="container">
+            <div class="card">
+                <div class="form-group">
+                    <label>Pilih Shift</label>
+                    <select id="shiftSelect">
+                        <option value="PAGI">Shift Pagi (07:00-15:00)</option>
+                        <option value="SORE">Shift Sore (15:00-23:00)</option>
+                        <option value="MALAM">Shift Malam (23:00-07:00)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Pilih Area</label>
+                    <select id="areaLaporan">
+                        <option value="CT">Cooling Tower</option>
+                        <option value="TURBINE">Turbine</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Detail Pekerjaan</label>
+                    <textarea id="detailLaporan" rows="4" placeholder="Deskripsikan pekerjaan yang dilakukan..."></textarea>
+                </div>
+                
+                <button class="btn btn-primary" onclick="saveLaporan()">💾 Simpan Laporan</button>
+            </div>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- TPM/ANOMALI SECTION -->
+    <div class="section" id="tpmSection">
+        <div class="header">
+            <h1>⚠️ Lapor Anomali</h1>
+            <p>Temuan Unsafe Condition</p>
+        </div>
+        <div class="container">
+            <div class="card">
+                <div class="form-group">
+                    <label>ID Tiket (Auto)</label>
+                    <input type="text" id="tpmId" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Keterangan Temuan</label>
+                    <textarea id="tpmDesc" rows="3" placeholder="Jelaskan temuan anomali..."></textarea>
+                </div>
+                
+                <div class="photo-upload" onclick="document.getElementById('tpmPhoto').click()">
+                    <div style="font-size: 3rem; margin-bottom: 8px;">📷</div>
+                    <div>Tap untuk ambil foto</div>
+                    <input type="file" id="tpmPhoto" accept="image/*" capture="environment" style="display: none" onchange="previewPhoto(this)">
+                </div>
+                <img id="photoPreview" class="photo-preview" style="display: none;">
+                
+                <button class="btn btn-danger" onclick="submitAnomali()">🚨 Kirim Laporan</button>
+            </div>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SECTION -->
+    <div class="section" id="dashboardSection">
+        <div class="header">
+            <h1>📊 Dashboard</h1>
+            <p>Monitoring Tiket Real-time</p>
+        </div>
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <div class="stat-number stat-open" id="statOpen">0</div>
+                    <div class="stat-label">Open</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number stat-progress" id="statProgress">0</div>
+                    <div class="stat-label">Progress</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number stat-closed" id="statClosed">0</div>
+                    <div class="stat-label">Closed</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-title">🔴 Tiket Perlu Tindakan</div>
+                <div id="ticketList">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="refreshDashboard()">🔄 Refresh Data</button>
+            <button class="btn btn-secondary" onclick="showSection('menuSection')">← Kembali</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav class="nav-bottom">
+        <div class="nav-item active" onclick="showSection('menuSection')">
+            <span class="nav-icon">🏠</span>
+            <span class="nav-text">Home</span>
+        </div>
+        <div class="nav-item" onclick="showSection('tpmSection')">
+            <span class="nav-icon">⚠️</span>
+            <span class="nav-text">Anomali</span>
+        </div>
+        <div class="nav-item" onclick="showSection('dashboardSection')">
+            <span class="nav-icon">📊</span>
+            <span class="nav-text">Dashboard</span>
+        </div>
+    </nav>
+
+    <script>
+        // ================== VALIDASI CONFIG ==================
+        if (!window.CONFIG || window.CONFIG.GAS_URL.includes('YOUR_URL_HERE') || window.CONFIG.GAS_URL.includes('PLACEHOLDER')) {
+            document.getElementById('setupAlert').style.display = 'block';
+            console.error('❌ GAS_URL belum di-setting di config.js');
+        }
+
+        // ================== DATA CONFIGURATION ==================
+        const AREAS_TURBINE = {
+            "Steam Inlet Turbine": [
+                "MPS Inlet 30-TP-6101 PI-6114 (kg/cm2)",
+                "MPS Inlet 30-TP-6101 TI-6153 (°C)",
+                "MPS Inlet 30-TP-6101 PI-6116 (kg/cm2)",
+                "LPS Extrac 30-TP-6101 PI-6123 (kg/cm2)",
+                "Gland Steam TI-6156 (°C)",
+                "MPS Inlet 30-TP-6101 PI-6108 (Kg/cm2)",
+                "Exhaust Steam PI-6111 (kg/cm2)",
+                "Gland Steam PI-6118 (Kg/cm2)"
+            ],
+            "Low Pressure Steam": [
+                "LPS from U-6101 PI-6104 (kg/cm2)",
+                "LPS from U-6101 TI-6102 (°C)",
+                "LPS Header PI-6106 (Kg/cm2)",
+                "LPS Header TI-6107 (°C)"
+            ],
+            "Lube Oil": [
+                "Lube Oil 30-TK-6102 LI-6104 (%)",
+                "Lube Oil 30-TK-6102 TI-6125 (°C)",
+                "Lube Oil 30-C-6101 (On/Off)",
+                "Lube Oil 30-EH-6102 (On/Off)",
+                "Lube Oil Cartridge FI-6143 (%)",
+                "Lube Oil Cartridge PI-6148 (mmH2O)",
+                "Lube Oil Cartridge PI-6149 (mmH2O)",
+                "Lube Oil PI-6145 (kg/cm2)",
+                "Lube Oil E-6104 (A/B)",
+                "Lube Oil TI-6127 (°C)",
+                "Lube Oil FIL-6101 (A/B)",
+                "Lube Oil PDI-6146 (Kg/cm2)",
+                "Lube Oil PI-6143 (Kg/cm2)",
+                "Lube Oil TI-6144 (°C)",
+                "Lube Oil TI-6146 (°C)",
+                "Lube Oil TI-6145 (°C)",
+                "Lube Oil FG-6144 (%)",
+                "Lube Oil FG-6146 (%)",
+                "Lube Oil TI-6121 (°C)",
+                "Lube Oil TI-6116 (°C)",
+                "Lube Oil FG-6121 (%)",
+                "Lube Oil FG-6116 (%)"
+            ],
+            "Control Oil": [
+                "Control Oil 30-TK-6103 LI-6106 (%)",
+                "Control Oil 30-TK-6103 TI-6128 (°C)",
+                "Control Oil P-6106 (A/B)",
+                "Control Oil FIL-6103 (A/B)",
+                "Control Oil PI-6152 (Bar)"
+            ],
+            "Shaft Line": [
+                "Jacking Oil 30-P-6105 PI-6158 (Bar)",
+                "Jacking Oil 30-P-6105 PI-6161 (Bar)",
+                "Electrical Turning Gear U-6103 (Remote/Running/Stop)",
+                "EH-6101 (ON/OFF)"
+            ],
+            "Condenser 30-E-6102": [
+                "LG-6102 (%)",
+                "30-P-6101 (A/B)",
+                "30-P-6101 Press Suction",
+                "30-P-6101 Press Discharge",
+                "30-P-6101 Load (amp)"
+            ],
+            "Ejector": [
+                "J-6101 PI-6126 A (Kg/cm2)",
+                "J-6101 PI-6127 B (Kg/cm2)",
+                "J-6102 PI-6128 A (Kg/cm2)",
+                "J-6102 PI-6129 B (Kg/cm2)",
+                "J-6104 PI-6131 (Kg/cm2)",
+                "J-6104 PI-6138 (Kg/cm2)",
+                "PI-6172 (kg/cm2)",
+                "LPS Extrac 30-TP-6101 TI-6155 (°C)",
+                "from U-6102 TI-6104 (°C)"
+            ],
+            "Generator Cooling Water": [
+                "Air Cooler PI-6124 A (Kg/cm2)",
+                "Air Cooler PI-6124 B (Kg/cm2)",
+                "Air Cooler TI-6113 A (°C)",
+                "Air Cooler TI-6113 B (°C)",
+                "Air Cooler PI-6125 A (Kg/cm2)",
+                "Air Cooler PI-6125 B (Kg/cm2)",
+                "Air Cooler TI-6114 A (°C)",
+                "Air Cooler TI-6114 B (°C)"
+            ],
+            "Condenser Cooling Water": [
+                "Condenser PI-6135 A (Kg/cm2)",
+                "Condenser PI-6135 B (Kg/cm2)",
+                "Condenser TI-6118 A (°C)",
+                "Condenser TI-6118 B (°C)",
+                "Condenser PI-6136 A (Kg/cm2)",
+                "Condenser PI-6136 B (Kg/cm2)",
+                "Condenser TI-6119 A (°C)",
+                "Condenser TI-6119 B (°C)"
+            ],
+            "BFW System": [
+                "Condensate Tank TK-6201 (%)",
+                "Condensate Tank TI-6216 (°C)",
+                "P-6202 (A/B)",
+                "P-6202 Press Suction",
+                "P-6202 Press Discharge",
+                "P-6202 Load (amp)",
+                "30-C-6202 A (ON/OFF)",
+                "30-C-6202 A (Ampere)",
+                "30-C-6202 B (ON/OFF)",
+                "30-C-6202 B (Ampere)",
+                "30-C-6202 PCV-6216 (%)",
+                "30-C-6202 PI-6107 (kg/cm2)",
+                "Condensate Drum 30-D-6201 LI-6209 (%)",
+                "Condensate Drum 30-D-6201 PI-6218 (kg/cm2)",
+                "Condensate Drum 30-D-6201 TI-6215 (°C)",
+                "Deaerator LI-6202 (%)",
+                "Deaerator TI-6201 (°C)",
+                "30-P-6201 (A/B)",
+                "30-P-6201 Press Suction",
+                "30-P-6201 Press Discharge",
+                "30-P-6201 Load (amp)"
+            ],
+            "Chemical Dosing": [
+                "30-TK-6205 LI-6204 (%)",
+                "30-TK-6205 30-P-6205 (A/B)",
+                "30-TK-6205 Press Disch (kg/cm2)",
+                "30-TK-6205 Stroke (%)",
+                "30-TK-6206 LI-6206 (%)",
+                "30-TK-6206 30-P-6206 (A/B)",
+                "30-TK-6206 Press Disch (kg/cm2)",
+                "30-TK-6206 Stroke (%)",
+                "30-TK-6207 LI-6208 (%)",
+                "30-TK-6207 30-P-6207 (A/B)",
+                "30-TK-6207 Press Disch (kg/cm2)",
+                "30-TK-6207 Stroke (%)"
+            ]
+        };
+
+        const AREAS_CT = {
+            "BASIN SA": [
+                "D-6511 LEVEL BASIN",
+                "D-6511 BLOWDOWN",
+                "D-6511 PH BASIN",
+                "D-6511 TRASSAR (A/M)",
+                "TK-6511 LEVEL ACID",
+                "FIL-6511 (A/B)",
+                "30-P-6511 A PRESS (kg/cm2)",
+                "30-P-6511 B PRESS (kg/cm2)",
+                "30-P-6511 C PRESS (kg/cm2)",
+                "MT-6511 A STATUS",
+                "MT-6511 B STATUS",
+                "MT-6511 C STATUS",
+                "MT-6511 D STATUS"
+            ],
+            "BASIN SU": [
+                "D-6521 LEVEL BASIN",
+                "D-6521 BLOWDOWN",
+                "D-6521 PH BASIN",
+                "D-6521 TRASSAR (A/M)",
+                "TK-6521 LEVEL ACID",
+                "FIL-6521 (A/B)",
+                "30-P-6521 A PRESS (kg/cm2)",
+                "30-P-6521 B PRESS (kg/cm2)",
+                "30-P-6521 C PRESS (kg/cm2)",
+                "MT-6521 A STATUS",
+                "MT-6521 B STATUS",
+                "MT-6521 C STATUS",
+                "MT-6521 D STATUS"
+            ],
+            "LH & TH": [
+                "LH C-6701 A",
+                "LH C-6701 B",
+                "LH C-6702 A",
+                "LH C-6702 B",
+                "TH C-6701 A",
+                "TH C-6701 B",
+                "TH C-6702 A",
+                "TH C-6702 B"
+            ],
+            "COMPRESSOR": [
+                "C-6701 A STATUS",
+                "C-6701 A PRESSURE",
+                "C-6701 A TEMP",
+                "C-6701 A FLOW",
+                "C-6701 B STATUS",
+                "C-6701 B PRESSURE",
+                "C-6701 B TEMP",
+                "C-6701 B FLOW",
+                "C-6702 A STATUS",
+                "C-6702 A PRESSURE",
+                "C-6702 A TEMP",
+                "C-6702 A FLOW",
+                "C-6702 B STATUS",
+                "C-6702 B PRESSURE",
+                "C-6702 B TEMP",
+                "C-6702 B FLOW"
+            ]
+        };
+
+        const AREAS_OLI = {
+            "OLI GEARBOX SA": ["MT-6511 A", "MT-6511 B", "MT-6511 C", "MT-6511 D"],
+            "OLI GEARBOX SU": ["MT-6521 B", "MT-6521 C", "MT-6521 D"]
+        };
+
+        // ================== STATE MANAGEMENT ==================
+        let currentState = {
+            mode: null,
+            area: null,
+            index: 0,
+            data: {},
+            currentParams: []
+        };
+
+        // ================== INITIALIZATION ==================
+        document.addEventListener('DOMContentLoaded', () => {
+            initAreas();
+            generateTpmId();
+            checkOnlineStatus();
+            initBackgroundSync();
+            updatePendingSyncUI();
+            
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('sw.js')
+                    .then(reg => console.log('SW registered:', reg))
+                    .catch(err => console.error('SW error:', err));
+            }
+        });
+
+        // ================== SYNC DATA ==================
+        async function syncData() {
+            if (!navigator.onLine) {
+                showToast('📴 Mode offline - data tersimpan lokal', 'warning');
+                updateSyncStatus('offline');
+                return;
+            }
+
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            const anomali = JSON.parse(localStorage.getItem('anomali') || '[]');
+            
+            const pendingLogs = logs.filter(l => !l.synced);
+            const pendingAnomali = anomali.filter(a => !a.synced);
+            
+            if (pendingLogs.length === 0 && pendingAnomali.length === 0) {
+                updateSyncStatus('online');
+                return;
+            }
+
+            updateSyncStatus('syncing');
+            showToast('🔄 Sinkronisasi data...', 'success');
+            
+            let successCount = 0;
+            let failCount = 0;
+
+            for (let log of pendingLogs) {
+                try {
+                    const result = await syncWithRetry(log);
+                    if (result.success) {
+                        log.synced = true;
+                        log.syncedAt = new Date().toISOString();
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (err) {
+                    failCount++;
+                }
+            }
+
+            for (let anom of pendingAnomali) {
+                try {
+                    const result = await syncWithRetry(anom);
+                    if (result.success) {
+                        anom.synced = true;
+                        anom.syncedAt = new Date().toISOString();
+                        successCount++;
+                    } else {
+                        failCount++;
+                    }
+                } catch (err) {
+                    failCount++;
+                }
+            }
+
+            localStorage.setItem('logsheets', JSON.stringify(logs));
+            localStorage.setItem('anomali', JSON.stringify(anomali));
+
+            updatePendingSyncUI();
+
+            if (successCount > 0) showToast(`✅ ${successCount} data tersinkronisasi`, 'success');
+            if (failCount > 0) showToast(`❌ ${failCount} data gagal`, 'error');
+
+            updateSyncStatus(failCount > 0 ? 'offline' : 'online');
+
+            if (document.getElementById('dashboardSection').classList.contains('active')) {
+                refreshDashboard();
+            }
+        }
+
+        async function syncWithRetry(data, attempt = 1) {
+            try {
+                const response = await fetch(CONFIG.GAS_URL, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                return { success: true, data: result };
+
+            } catch (error) {
+                if (attempt < CONFIG.MAX_RETRIES) {
+                    await delay(CONFIG.RETRY_DELAY * attempt);
+                    return syncWithRetry(data, attempt + 1);
+                }
+                return { success: false, error: error.message };
+            }
+        }
+
+        function initBackgroundSync() {
+            setInterval(() => {
+                if (navigator.onLine) syncData();
+            }, CONFIG.SYNC_INTERVAL);
+
+            window.addEventListener('online', () => {
+                document.getElementById('offlineBanner').classList.remove('show');
+                showToast('🌐 Koneksi kembali! Sinkronisasi...', 'success');
+                setTimeout(syncData, 1000);
+            });
+
+            window.addEventListener('offline', () => {
+                document.getElementById('offlineBanner').classList.add('show');
+                updateSyncStatus('offline');
+            });
+
+            document.addEventListener('visibilitychange', () => {
+                if (!document.hidden && navigator.onLine) syncData();
+            });
+        }
+
+        function updateSyncStatus(status) {
+            const indicator = document.getElementById('syncStatus');
+            const icon = document.getElementById('syncIcon');
+            const text = document.getElementById('syncText');
+            
+            indicator.className = 'sync-status ' + status;
+            
+            switch(status) {
+                case 'online':
+                    icon.textContent = '🟢';
+                    text.textContent = 'Online';
+                    break;
+                case 'offline':
+                    icon.textContent = '📴';
+                    text.textContent = 'Offline';
+                    break;
+                case 'syncing':
+                    icon.textContent = '🔄';
+                    text.textContent = 'Syncing...';
+                    break;
+            }
+        }
+
+        function updatePendingSyncUI() {
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            const anomali = JSON.parse(localStorage.getItem('anomali') || '[]');
+            
+            const pendingLogs = logs.filter(l => !l.synced).length;
+            const pendingAnomali = anomali.filter(a => !a.synced).length;
+            const totalPending = pendingLogs + pendingAnomali;
+            
+            const card = document.getElementById('pendingSyncCard');
+            const list = document.getElementById('pendingSyncList');
+            
+            if (totalPending === 0) {
+                card.style.display = 'none';
+                return;
+            }
+            
+            card.style.display = 'block';
+            list.innerHTML = `
+                <div style="margin-bottom: 8px;">
+                    <span style="color: var(--text-muted);">Logsheet:</span> 
+                    <span style="color: var(--warning); font-weight: bold;">${pendingLogs} pending</span>
+                </div>
+                <div>
+                    <span style="color: var(--text-muted);">Anomali:</span> 
+                    <span style="color: var(--warning); font-weight: bold;">${pendingAnomali} pending</span>
+                </div>
+            `;
+        }
+
+        function forceSync() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '🔄 Syncing...';
+            btn.disabled = true;
+            
+            syncData().then(() => {
+                btn.innerHTML = originalText;
+                btn.disabled = false;
+            });
+        }
+
+        // ================== NAVIGATION ==================
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById(sectionId).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            if (sectionId === 'menuSection') {
+                document.querySelector('.nav-item:nth-child(1)').classList.add('active');
+                updatePendingSyncUI();
+            } else if (sectionId === 'tpmSection') {
+                document.querySelector('.nav-item:nth-child(2)').classList.add('active');
+            } else if (sectionId === 'dashboardSection') {
+                document.querySelector('.nav-item:nth-child(3)').classList.add('active');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        // ================== AREA SELECTION ==================
+        function initAreas() {
+            renderAreaList('turbineAreas', AREAS_TURBINE, 'TURBINE');
+            renderAreaList('ctAreas', AREAS_CT, 'CT');
+            renderAreaList('oliAreas', AREAS_OLI, 'OLI');
+        }
+
+        function renderAreaList(containerId, areas, mode) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+            
+            Object.keys(areas).forEach(area => {
+                const div = document.createElement('div');
+                div.className = 'area-item';
+                div.innerHTML = `
+                    <span>${area}</span>
+                    <span style="color: var(--text-muted); font-size: 0.875rem;">
+                        ${areas[area].length} params
+                    </span>
+                `;
+                div.onclick = () => selectArea(mode, area, areas[area]);
+                container.appendChild(div);
+            });
+        }
+
+        function selectArea(mode, area, params) {
+            currentState = {
+                mode: mode,
+                area: area,
+                index: 0,
+                data: {},
+                currentParams: params
+            };
+            
+            document.getElementById('inputTitle').textContent = 
+                mode === 'TURBINE' ? '⚙️ Turbine' : mode === 'CT' ? '🌀 CT' : '🛢️ Oli';
+            document.getElementById('inputSubtitle').textContent = `Area: ${area}`;
+            
+            updateProgress();
+            showParameter();
+            showSection('inputSection');
+        }
+
+        // ================== PARAMETER INPUT ==================
+        function showParameter() {
+            const param = currentState.currentParams[currentState.index];
+            const prevData = getPreviousValue(param);
+            
+            document.getElementById('paramName').textContent = param;
+            document.getElementById('paramCounter').textContent = 
+                `Parameter ${currentState.index + 1}/${currentState.currentParams.length}`;
+            
+            const unitMatch = param.match(/\(([^)]+)\)$/);
+            document.getElementById('paramUnit').textContent = unitMatch ? unitMatch[1] : '-';
+            
+            document.getElementById('paramPrev').textContent = 
+                prevData ? `Data sebelumnya: ${prevData}` : 'Data sebelumnya: -';
+            
+            document.getElementById('paramInput').value = currentState.data[param] || '';
+            
+            const quickActions = document.getElementById('quickActions');
+            if (param.includes('(On/Off)') || param.includes('(A/B)') || param.includes('STATUS')) {
+                quickActions.style.display = 'flex';
+            } else {
+                quickActions.style.display = 'none';
+            }
+            
+            updateProgress();
+        }
+
+        function setQuickValue(val) {
+            document.getElementById('paramInput').value = val;
+        }
+
+        function nextParameter() {
+            const param = currentState.currentParams[currentState.index];
+            const value = document.getElementById('paramInput').value.trim();
+            
+            if (!value) {
+                showToast('Silakan isi nilai parameter', 'warning');
+                return;
+            }
+            
+            const errKeywords = ["RUSAK", "BROKEN", "MATI", "LEAK", "ERROR", "UPPER", "KERUSAKAN"];
+            const isAbnormal = errKeywords.some(k => value.toUpperCase().includes(k));
+            
+            if (isAbnormal) {
+                savePendingAnomali(param, value);
+            }
+            
+            currentState.data[param] = value;
+            currentState.index++;
+            
+            if (currentState.index >= currentState.currentParams.length) {
+                saveLogsheet();
+            } else {
+                showParameter();
+            }
+        }
+
+        function prevParameter() {
+            if (currentState.index > 0) {
+                currentState.index--;
+                showParameter();
+            } else {
+                showSection(currentState.mode === 'TURBINE' ? 'turbineSection' : 
+                           currentState.mode === 'CT' ? 'ctSection' : 'oliSection');
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentState.index / currentState.currentParams.length) * 100).toFixed(0);
+            const progressBar = currentState.mode === 'TURBINE' ? 'turbineProgress' : 
+                               currentState.mode === 'CT' ? 'ctProgress' : null;
+            if (progressBar) {
+                document.getElementById(progressBar).style.width = progress + '%';
+            }
+        }
+
+        // ================== DATA STORAGE ==================
+        function saveLogsheet() {
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            logs.push({
+                timestamp: new Date().toISOString(),
+                mode: currentState.mode,
+                area: currentState.area,
+                data: currentState.data,
+                synced: false
+            });
+            localStorage.setItem('logsheets', JSON.stringify(logs));
+            
+            showToast('✅ Logsheet tersimpan!', 'success');
+            updatePendingSyncUI();
+            showSection('menuSection');
+            syncData();
+        }
+
+        function saveLaporan() {
+            const shift = document.getElementById('shiftSelect').value;
+            const area = document.getElementById('areaLaporan').value;
+            const detail = document.getElementById('detailLaporan').value;
+            
+            if (!detail.trim()) {
+                showToast('Silakan isi detail pekerjaan', 'warning');
+                return;
+            }
+            
+            const laporan = {
+                timestamp: new Date().toISOString(),
+                type: 'LAPORAN',
+                shift: shift,
+                area: area,
+                detail: detail,
+                synced: false
+            };
+            
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            logs.push(laporan);
+            localStorage.setItem('logsheets', JSON.stringify(logs));
+            
+            document.getElementById('detailLaporan').value = '';
+            showToast('✅ Laporan tersimpan!', 'success');
+            updatePendingSyncUI();
+            syncData();
+        }
+
+        function submitAnomali() {
+            const id = document.getElementById('tpmId').value;
+            const desc = document.getElementById('tpmDesc').value;
+            const photoInput = document.getElementById('tpmPhoto');
+            
+            if (!desc.trim()) {
+                showToast('Silakan isi keterangan temuan', 'warning');
+                return;
+            }
+            
+            const anomali = {
+                timestamp: new Date().toISOString(),
+                type: 'ANOMALI',
+                id: id,
+                description: desc,
+                photo: null,
+                status: 'OPEN',
+                synced: false
+            };
+            
+            if (photoInput.files && photoInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    anomali.photo = e.target.result;
+                    saveAnomali(anomali);
+                };
+                reader.readAsDataURL(photoInput.files[0]);
+            } else {
+                saveAnomali(anomali);
+            }
+        }
+
+        function saveAnomali(anomali) {
+            const list = JSON.parse(localStorage.getItem('anomali') || '[]');
+            list.push(anomali);
+            localStorage.setItem('anomali', JSON.stringify(list));
+            
+            document.getElementById('tpmDesc').value = '';
+            document.getElementById('tpmPhoto').value = '';
+            document.getElementById('photoPreview').style.display = 'none';
+            generateTpmId();
+            
+            showToast('🚨 Anomali dilaporkan!', 'success');
+            updatePendingSyncUI();
+            syncData();
+        }
+
+        function savePendingAnomali(param, value) {
+            const pending = JSON.parse(localStorage.getItem('pendingAnomali') || '[]');
+            pending.push({
+                param: param,
+                value: value,
+                timestamp: new Date().toISOString()
+            });
+            localStorage.setItem('pendingAnomali', JSON.stringify(pending));
+        }
+
+        // ================== DASHBOARD ==================
+        function refreshDashboard() {
+            const anomali = JSON.parse(localStorage.getItem('anomali') || '[]');
+            
+            let open = 0, progress = 0, closed = 0;
+            const activeTickets = [];
+            
+            anomali.forEach(t => {
+                if (t.status === 'CLOSED') closed++;
+                else if (t.status === 'IN PROGRESS') {
+                    progress++;
+                    if (activeTickets.length < 5) activeTickets.push(t);
+                } else {
+                    open++;
+                    if (activeTickets.length < 5) activeTickets.push(t);
+                }
+            });
+            
+            document.getElementById('statOpen').textContent = open;
+            document.getElementById('statProgress').textContent = progress;
+            document.getElementById('statClosed').textContent = closed;
+            
+            const listContainer = document.getElementById('ticketList');
+            if (activeTickets.length === 0) {
+                listContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted);">✅ Semua tiket selesai</p>';
+            } else {
+                listContainer.innerHTML = activeTickets.map(t => `
+                    <div class="ticket">
+                        <div class="ticket-header">
+                            <span class="ticket-id">${t.id}</span>
+                            <span class="status-badge status-${t.status === 'IN PROGRESS' ? 'progress' : 'open'}">
+                                ${t.status}
+                            </span>
+                        </div>
+                        <div class="ticket-body">${t.description}</div>
+                        <div class="ticket-actions">
+                            <button onclick="updateTicket('${t.id}', 'IN PROGRESS')" 
+                                style="background: var(--warning); color: #000;">Update</button>
+                            <button onclick="updateTicket('${t.id}', 'CLOSED')" 
+                                style="background: var(--success); color: #fff;">Close</button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function updateTicket(id, status) {
+            const anomali = JSON.parse(localStorage.getItem('anomali') || '[]');
+            const idx = anomali.findIndex(t => t.id === id);
+            if (idx !== -1) {
+                anomali[idx].status = status;
+                anomali[idx].synced = false;
+                localStorage.setItem('anomali', JSON.stringify(anomali));
+                refreshDashboard();
+                updatePendingSyncUI();
+                syncData();
+            }
+        }
+
+        // ================== UTILITIES ==================
+        function generateTpmId() {
+            const now = new Date();
+            const id = 'BOT-' + now.toTimeString().slice(0,8).replace(/:/g,'');
+            document.getElementById('tpmId').value = id;
+        }
+
+        function getPreviousValue(param) {
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            for (let i = logs.length - 1; i >= 0; i--) {
+                if (logs[i].data && logs[i].data[param]) {
+                    return logs[i].data[param];
+                }
+            }
+            return null;
+        }
+
+        function previewPhoto(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const preview = document.getElementById('photoPreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function showRekap(type) {
+            const logs = JSON.parse(localStorage.getItem('logsheets') || '[]');
+            const filtered = logs.filter(l => l.mode === type || (type === 'LAPORAN' && l.type === 'LAPORAN'));
+            
+            if (filtered.length === 0) {
+                showToast('Belum ada data tersimpan', 'warning');
+                return;
+            }
+            
+            const latest = filtered[filtered.length - 1];
+            let msg = `📊 REKAP ${type}\n`;
+            msg += `Waktu: ${new Date(latest.timestamp).toLocaleString('id-ID')}\n\n`;
+            
+            if (latest.data) {
+                Object.entries(latest.data).forEach(([k, v]) => {
+                    msg += `${k}: ${v}\n`;
+                });
+            } else if (latest.detail) {
+                msg += `Shift: ${latest.shift}\n`;
+                msg += `Area: ${latest.area}\n`;
+                msg += `Detail: ${latest.detail}\n`;
+            }
+            
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(msg)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        function checkOnlineStatus() {
+            const banner = document.getElementById('offlineBanner');
+            
+            if (!navigator.onLine) {
+                banner.classList.add('show');
+                updateSyncStatus('offline');
+            } else {
+                updateSyncStatus('online');
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+            
+            toast.className = 'toast ' + type;
+            icon.textContent = type === 'success' ? '✓' : type === 'error' ? '✕' : '⚠';
+            msg.textContent = message;
+            
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+
+        setInterval(() => {
+            if (document.getElementById('dashboardSection').classList.contains('active')) {
+                refreshDashboard();
+            }
+        }, 30000);
+    </script>
+</body>
+</html>
