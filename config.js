@@ -13,7 +13,7 @@
 const CONFIG = {
     // 🔧 EDIT INI: URL Web App Google Apps Script Anda
     // Contoh: 'https://script.google.com/macros/s/AKfycby1234567890abcdefghijklmnopqrstuvwxyz/exec'
-    GAS_URL: 'https://script.google.com/macros/s/AKfycbyM4CgSczj_zRgqHhQcsRpZZBwOakDH8G3AejwmsZCo-dK3rL37lQLhezkrMm86puFj7w/exec',
+    GAS_URL: 'https://script.google.com/macros/s/AKfycbzARQ-F1HxJ90eE3qWMXMem1KSjR5Cgv6NFGOLG-ynkvNCvOqObqofPqJdaUXR1YlahAA/exec',
     
     // Konfigurasi sync (jangan edit)
     MAX_RETRIES: 3,
